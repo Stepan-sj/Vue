@@ -1,2 +1,2 @@
 # Vue
-Vue.js 学习之旅 
+Vue.js 学习之旅  
