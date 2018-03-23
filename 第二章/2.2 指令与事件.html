@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<input type="text" name="" v-model="name">
+		<h1>{{name}}</h1>
+		<h2>{{number | padData}}</h2>
+		<p v-if="show">显示这段文本</p>
+	</div>
+	<div id="app2">
+		<a v-bind:href="url">百度</a>
+		<img v-bind:src="imgurl">
+		<p v-if="show">显示的文本</p>
+		<button v-on:click="handleClose">check me</button>
+	</div>
+	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		/*
+			指令是VUE模板中最常用的功能， 带有前缀v- 比如v-model,v-if 等.
+			主要的职责就是当其表达式的值改变的时候,相应的将某些行为应用到DOM上.
+			比如通过v-if来控制DOM的操作，以数据驱动DOM是Vue的核心理念。当show为true时，文本就会插入
+			为false时就会呗移除。
+		*/
+
+		let app = new Vue({
+			el:"#app",
+			data:{
+				name:"陈",
+				number:5,
+				show:true
+			},
+			// 修饰符的方法
+			filters:{
+				padData(val){
+					return val + "0"
+				}
+			},
+			//  实例创建完成后调用
+			mounted(){
+
+			},
+			// 实例销毁之前调用
+			beforeDestroy(){
+
+			}
+		})
+
+		// v-bind和v-on 
+		// v-bind的基本用途是动态的更新HTML元素上的属性，比如class,id等。
+		// v-on则是绑定事件监听器，从而进行一些事件交互。v-on 可以监听原生的DOM事件，
+		//     比如click，hover等等。
+		//     v-on后面的表达式可以是一个方法名，也可以是一个内联语句。
+		//     方法则都写在Vue实例里的methods属性里面内
+		//     并且this指向的是Vue的实例本身，所以可以直接使用this.xxx来修改或访问数据。
+		//     也可以直接是一个内联语句。 改写为 <button v-on:click="show = false"></button>
+
+		let app2 = new Vue({
+			el:"#app2",
+			data:{
+				url:"www.baidu.com",
+				imgurl:"",
+				show:true
+			},
+			// methods是用来存放绑定的方法
+			methods:{
+				// handleClose(){
+				// 	this.show = false
+				// }
+				handleClose(){
+					this.close();
+				},
+				close(){
+					this.show = false;
+				}
+			},
+			filters:{
+
+			},
+			mounted(){
+
+			},
+			beforeDestroy(){
+
+			}
+		})
+
+		// Vue.js将methods里面的方法也代理了，所以也可以像使用访问数据一样来调用方法
+
+	</script>
+</body>
+</html>
