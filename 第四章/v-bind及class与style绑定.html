@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		.active{
+			background: blue;
+		}
+		.box{
+			height: 100px;
+			width: 100px;
+			border: 1px solid #000;
+		}
+		.error{
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<a :href="url" target="_blank">链接</a>
+		<div :class="{'active':isActive,'error':isError}" class="box" ></div>
+		<button @click="change">click me</button>
+	</div>
+
+	<div class="app2">
+		<button :class="[activeCls,errorCls]" class="box">asdas</button>
+		<div class="box" :class="[isActive ? activeCls : '',errorCls]"></div>
+		<div class="box" :class="[{'active':isActive},errorCls]"></div>
+	</div>
+	<div id="app3">
+		<button :class="classes">adsa</button>
+	</div>
+	<div id="app4">
+		<p :style="{'color':color,'fontSize':fontSize + 'px'}"  >asdasdasdasdasdas</p>
+		<p :style="styles">asdasdas</p>
+	</div>
+	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		//  绑定class的几种方式:
+
+		// 1. 对象语法  给:class设置一个对象，可以动态的切换class。
+		// 也可以传入多个属性来切换。
+		// 类名active依赖于isActive 为true时div拥有active类名。
+		
+		let app = new Vue({
+			el:"#app",
+			data:{
+				url:"https://www.baidu.com",
+				isActive:true,
+				isError:true
+			},
+			computed:{
+				classes(){
+					return 
+				}
+			},
+			methods:{
+				change(){
+					console.log(1);
+					this.isError = !this.isError;
+				}
+			}
+		})
+
+		// 2  数组语法  给:class绑定一个数组，应用一个class列表
+		// 也可以使用三元表达式来根据条件切换
+		// 还可以在数组语法中使用对象语法 
+		let app2 = new Vue({
+			el:".app2",
+			data:{
+				isActive:true,
+				activeCls:"active",
+				errorCls:"error"
+			}
+		})
+
+		//  当业务逻辑比较复杂的时候，也可以通过计算属性给元素动态设置类名，尤其是在写复用组件的时候
+
+		let app3 = new Vue({
+			el:"#app3",
+			data:{
+				size:'large',
+				disabled:true
+			},
+			computed:{
+				classes(){
+					return [
+						'btn',
+						{
+							['btn-' + this.size]:this.size !== "",
+							['btn-disable']:this.disabled
+						}
+					]
+				}
+			}
+		})
+
+		// 绑定内联样式，与:class类似，也有对象语法和数组语法，看起来很像直接在元素上写css
+		// 另外 使用:style时,Vue会自动给特殊的CSS属性名称增加前缀。
+		let app4 = new Vue({
+			el:"#app4",
+			data:{
+				color:"red",
+				fontSize:14,
+				styles:{
+					color:"red",
+					fontSize:14 + 'px',
+				}
+			}
+		})
+	</script>
+</body>
+</html>
