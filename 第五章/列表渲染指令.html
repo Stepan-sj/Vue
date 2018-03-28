@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		[v-cloak] {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<ul>
+			<li v-for="book in books">{{book.name}}</li>
+		</ul>
+		<ul>
+			<li v-for="book of books">{{book.name}}</li>
+		</ul>
+		<ul>
+			<li v-for="(book,index) in books">{{index}} - {{book.name}}</li>
+		</ul>
+		<ul>
+			<template v-for="book in books2">
+				<li>书名：{{book.name}}</li>
+				<li>作者：{{book.author}}</li>
+			</template>
+		</ul>
+		<span v-for="value in user">{{value}}</span>
+		<ul>
+			<li v-for="(value,key,index) in user">
+				{{index}} - {{key}}:{{value}}
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script>
+		// 列表渲染指令
+		// 当需要将一个数组遍历或枚举一个对象循环显示时，就会用到列表渲染指令v-for。它的表达式结合in来使用
+		// 类似于item in item的形式。
+		/*
+			表达式中，books是数据，book是当前数组元素的别名，循环出的Li元素都可以访问到对应当前的数据book。
+			也可以使用of来代替in作为分隔符。
+			v-for的表达式支持一个可选参数作为当前项的索引 
+		*/
+
+		// v-for 也可以用再内置标签<template> 
+		// 除了数组外，对象的属性也是可以遍历的,遍历对象时有俩个可选参数，分别是索引和键名
+		let app = new Vue({
+			el:"#app",
+			data:{
+				books:[
+					{name:"Vue.js实战"},
+					{name:"JavaScript语言精粹"},
+					{name:"JavaScript高级程序设计"}
+				],
+				books2:[
+					{name:"Vue.js实战",author:"1"},
+					{name:"JavaScript语言精粹",author:"2"},
+					{name:"JavaScript高级程序设计",author:"3 "}
+				],
+				user:{
+					name:"陈",
+					gender:"男",
+					age:24
+				}
+			},
+
+		})
+	</script>
+</body>
+</html>

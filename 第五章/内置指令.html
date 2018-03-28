@@ -12,17 +12,66 @@
 
 <body>
 	<div id="app" v-cloak>
-		
+		<p v-if="status == 1">status为1的时候显示</p>
+		<p v-else-if="status == 2">status为2的时候显示</p>
+		<p v-else>都不是就显示这行</p>
+		<template v-if="status == 1">
+			<p>1123</p>
+			<p>123123</p>
+			<p>12312</p>
+		</template>
+		<template v-if="type === 'name'">
+			<label>用户名</label>
+			<input type="text" placeholder="用户名" key="user-input">
+		</template>
+		<template v-else>
+			<label>邮箱</label>
+			<input type="text" placeholder="邮箱" key="mail-input">
+		</template>
+		<button @click="ToggleType">切换类型</button>
 	</div>
 	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script>
 		// 常用的内置指令
 
+		//1.基本指令 
 		// v-cloak  这个指令并不需要表达式，它会在Vue实例结束编译时从绑定的HTML元素上移除，和
 		// display:none使用，防止网速慢，Vue.js文件还没有加载完成时，看到页面上显示的{{message}}
 		// 字样  
 
-		// v-once 也是不需要表达式，定义它的元素或组件只渲染一次，之后不会再随着数据的变化而重新渲染。
+		// v-once 也是不需要表达式，定义它的元素或组件只渲染一次，之后不会再随着数据的变化而重新渲染。  
+
+		//2.条件渲染指令。
+		// v-if v-else-if v-else 
+		/*
+			与JavaScript中的条件语句相似，Vue的条件指令v-if,v-else-if,v-else可以根据表达式的值在DOM中销毁或渲染
+			元素/组件,表达式的值为真，当前元素/节点及所有字节点将被渲染，为假时移除。如果判断多个则可以使用
+			vue内置的<template></template>元素上使用条件指令,最终的渲染结果不会包含改元素。
+		*/ 
+		// 渲染元素时，会可能的复用已有的元素而非重复渲染。
+		// 输入内容后，点击切换按钮 虽然DOM变了 但是之前输入的内容并没有改变。
+		// 如果你不希望复用，可以使用Vue提供的key属性，它让你自己决定是否要复用。key的值必须是唯一的。
+		// v-show的用法和v-if基本一致，只是v-show是改变元素的CSS属性display，当表达式的值为false时隐藏，true显示
+
+		// v-if 与 v-show的选择
+		 /*
+				俩者的功能都是类似的，只不过v-if是更具表达式适当的销毁或重建元素及绑定的事件或子组件。
+				如果v-if的初始值为false，则一开始元素/组件并不会渲染，只有当条件第一次变为真时才开始变异。
+				而v-show只是简单的css属性切换，无论条件真与否，都会被编译。
+				相比之下，v-if更适合条件不经常改变的场景，因为开销相对较大，而v-show适用于频繁的切换条件。
+		 */
+		let app = new Vue({
+			el:"#app",
+			data:{
+				status:1,
+				type:'name'
+			},
+			methods:{
+				ToggleType(){
+					this.type = this.type === 'name'?'mail':'name'
+				}
+			}
+		})
 	</script>
 </body>
 </html>
