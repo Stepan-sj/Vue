@@ -32,6 +32,18 @@
 				{{index}} - {{key}}:{{value}}
 			</li>
 		</ul>
+		<hr>
+		<ul>
+			<template v-for="book in filterBooks">
+				<li>书名:{{book.name}}</li>
+			</template>
+		</ul>
+		<hr>
+		<ul>
+			<template v-for="book in sortedBooks">
+				<li>书名:{{book.name}}</li>
+			</template>
+		</ul>
 	</div>
 	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script>
@@ -65,8 +77,49 @@
 					age:24
 				}
 			},
-
+			computed:{
+				filterBooks:function(){
+					return this.books2.filter((book) => {
+						return book.name.match(/JavaScript/)
+					})
+				},
+				sortedBooks(){
+					return this.books2.sort((a,b) =>{
+						return a.name.length < b.name.length
+					})
+				}
+			}
 		})
+
+		// Vue的核心是数据与视图的双向绑定，当修改数组的时候,Vue会检测到数据变化，相应的视图也会立即更新.
+		// Vue包含了一组观察数组变异的方法(也就是会改变原数组的方法),它们改变数组也会触发视图更新。
+		app.books.push({
+			name:"CSS",
+			author:"4"
+		})
+		// 但是还有一些非变异方法，它们返回的是一个新的数组，之后替换掉原来数组
+		app.books = app.books.filter(function(item) {
+			return item.name.match(/JavaScript/);
+		});  
+
+		// 需要注意的是 以下变动是不会被检测到，也不会触发视图更新
+		//app.books[3] = {...};   通过索引直接设置项
+		//app.books.length = 1;   修改数组长度
+
+		// 如果需要用到上面的话，第一个问题可以使用Vue内置的set方法。
+		Vue.set(app.books,1,{
+			name:'css',
+			author:"3"
+		})
+		//  还可以使用splice解决
+		app.books.splice(1,1,{
+			name:"css揭秘",
+			author:"1"
+		});
+
+		// 过滤与排序 
+		// 如果不想改变原数组，想通过一个数组的副本来做过滤或排序的显示时，可以使用计算属性
+
 	</script>
 </body>
 </html>

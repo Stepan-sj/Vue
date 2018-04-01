@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		[v-cloak] {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="app" v-cloak>
+		点击次数:{{counter}}
+		<br>
+		<button @click="counter++">+1</button>
+		<button @click="add(10)">+10</button>
+		<hr>
+		<a href="https://www.baidu.com" @click="handleClick('禁止打开',$event)">百度</a>
+	</div>
+	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script>
+		// 使用v-on + 事件名 来绑定事件，(上面的@click等同于v-on:click,是一个语法糖)。
+		// 后面的表达式可以直接使用JavaScript语句，也可以是一个在Vue实例中methods内的函数名。
+		let app = new Vue({
+			el:"#app",
+			data:{
+				counter:0
+			},
+			methods:{
+				//methods内的this都是指向Vue的实例
+				add(count){
+					this.counter += count;
+				},
+				handleClick(message,event){
+					event.preventDefault();
+					alert(message);
+				}
+			},
+		})
+
+		//Vue还提供了一个特殊变量$event，用于访问原生的DOM事件。
+
+	</script>
+</body>
+</html>
