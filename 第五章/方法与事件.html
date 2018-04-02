@@ -22,6 +22,7 @@
 	<script>
 		// 使用v-on + 事件名 来绑定事件，(上面的@click等同于v-on:click,是一个语法糖)。
 		// 后面的表达式可以直接使用JavaScript语句，也可以是一个在Vue实例中methods内的函数名。
+		//Vue还提供了一个特殊变量$event，用于访问原生的DOM事件。
 		let app = new Vue({
 			el:"#app",
 			data:{
@@ -39,7 +40,19 @@
 			},
 		})
 
-		//Vue还提供了一个特殊变量$event，用于访问原生的DOM事件。
+		// 在实例上使用的event.preventDefault()可以使用Vue事件的修饰符来实现。
+		// 通过在绑定的事件后面加'.' 在加修饰符。
+		/*
+			修饰符有以下几种：
+				1. stop  <a @click.stop="handle"></a>  阻止事件冒泡
+				2. pervent <form @submit.prevent="handle"></form> 提交事件不在重载页面
+				3. self <div @click.self="handle"> 当事件在该元素本身而不是子元素触发时触发回调。
+				4. once  <div @click.once="handle">  事件只触发一次
+			修饰符也可以串联
+				<a @clikc.stop.prevent="handle"></a>
+			只有修饰符 
+				<div @click.stop> 
+		*/
 
 	</script>
 </body>
