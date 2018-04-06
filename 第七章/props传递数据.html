@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+			<my-component message="来自父组件的数据"></my-component>
+			<my-component2 warning-text="提示信息"></my-component2>
+			<br>
+			<input type="text" v-model="parentMessage">  
+			<br>
+			<my-component3 :message="parentMessage"></my-component3>
+			<br>
+			<my-component4 :init-count="123"></my-component4>
+			<my-component5 :width="100"></my-component5>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		//组件不仅仅是要把模板的内容进行复用，更重要的是组件间要进行通信。
+		/*
+			通常父组件中要包含子组件，父组件要正向地向子组件传递数据或参数，
+			子组件根据参数的不同来渲染不同的内容或执行操作。
+			这个正向传递数据的过程就是props来实现的。
+		*/
+		// 使用props选项来接收父组件的数据，props的值可以是对象和数组。
+		// props中声明的数组和data函数return的数据主要区别在于props来自父级，而data中是组件自己的数据，
+		// 作用域是组件本身。这俩种数据都可以在模板中及计算属性computed和方法methods中使用.
+		Vue.component('my-component',{
+			props:['message'],
+			template:'<div>{{message}}</div>'
+		})
+		// 在使用DOM模板的时候，驼峰命名的props名称要转为短横分隔命名。
+		Vue.component('my-component2',{
+			props:['warningText'],
+			template:'<div>{{warningText}}</div>'
+		})
+		// 有的时候，传递的数据是动态的，这个时候可以使用v-bind来动态绑定props的值。
+
+		// 单项数据流 只有父组件向子组件传输数据，子组件无法向父组件传输数据。
+
+		Vue.component('my-component3',{
+			props:['message'],
+			template:'<div>{{message}}</div>'
+		})
+		/*
+			有的时候需要改变俩种prop的情况，一种是父组件传递初始值过来，子组件将它的初始值保存起来，
+			然后在自己的作用域下随意使用和修改。
+			这种时候可以在组件data内声明一个数据来引用父组件的prop。
+		*/
+		Vue.component('my-component4',{
+			props:['initCount'],
+			template:'<div>{{count}}</div>',
+			data(){
+				return {
+					count:this.initCount
+				}
+			}
+		})
+		/*
+			另外一种是prop作为需要被转变的原始值传入,这种时候是要使用计算属性就OK了。
+		*/
+		Vue.component('my-component5',{
+			props:['width'],
+			template:'<div :style="style">组件内容</div>',
+			computed:{
+				style(){
+					return {
+						width :this.width + 'px'
+					}
+				}
+			}
+		})
+
+		/*
+			上面的props选项都是一个数组，但是props的值还可以是对象，当prop的值需要验证的时候，就可以使用对象.
+		*/
+		Vue.component('my-component6',{
+			props:{
+				propA:Number, //必须是数字类型,
+				propB:[Number,String],/ / 必须是数字或者字符串
+				propC:{
+					type:Boolean, //布尔值 如果没定义默认true
+					default:true,
+				},  
+				propD: {  // 数值，而且必须传
+					type:Number, 
+					required:true 
+				},
+				propE: { // 如果是对象或者数组，默认值必须是一个函数来返回
+					type:Array,
+					default:function(){
+						return []
+					}
+				},
+				propF: {  // 自定义一个验证函数
+					validator(val){
+						return val > 10
+					}
+				}
+			}
+		})
+		let app = new Vue({
+			el:"#app",
+			data:{
+				parentMessage:''
+			}
+		})
+
+
+	</script>	
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<my-component></my-component>
+		<my-component></my-component>
+		<my-component2></my-component2>
+		<table>
+			<tbody is="my-component"></tbody>
+		</table>
+	</div>
+	<hr>
+	<br>
+	<div id="app2">
+		<my-component4></my-component4>
+		<my-component4></my-component4>
+		<my-component4></my-component4>
+		<br>
+		<my-component3></my-component3>
+		<my-component3></my-component3>
+		<my-component3></my-component3>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		// 组件需要注册了以后才能使用，注册分局部注册和全局注册。全局注册后，任何Vue的实例都可以使用。
+		// 全局注册 
+		Vue.component('my-component',{
+			// 选项
+			template:'<div>这里是组件的内容</div>'  // 必须被一个DOM元素包含，如果没有DOM元素，是无法渲染的。
+		}) 
+		//  要在父实例中使用组件，必须要在实例注册之前创建组件。
+		// 之后就可以使用<my-component></my-component>的形式来使用了。
+
+		// 使用components选项来创建局部组件;
+		let Child = {
+			template:'<div>{{message}}</div>',
+			data(){
+				return {
+					message:"局部组件内容"
+				}
+			}
+		}
+
+		let app = new Vue({
+			el:"#app",
+			components:{
+				'my-component2':Child
+			}
+		})
+
+		// 遇到像table ul select之类限制元素的时候，直接使用组件是无效的，需要用到is属性来挂载组件
+
+		// 注册组件的时候除了template选项外，还可以使用别的选项，例如data、conputed、methods等。
+		// 使用data的时候，data必须是函数，然后将数据return出去。 
+
+		// 如果data中return出的对象引用的是外部的一个对象，那这个对象是共享的，任何一方修改都会同步
+		// 这显然不是我们需要的，所有组件返回一个新的data对象来独立，这样就不影响了
+		let data = {
+			counter: 0
+		}
+
+		Vue.component("my-component3",{
+			template:'<button @click="counter++">{{counter}}</button>',
+			data(){
+				return {
+					counter:0
+				};
+			}
+		})
+		Vue.component("my-component4",{
+			template:'<button @click="counter++">{{counter}}</button>',
+			data(){
+				return data
+			}
+		})
+
+		let app2 = new Vue({
+			el:"#app2"
+		})
+	</script>
+</body>
+</html>
