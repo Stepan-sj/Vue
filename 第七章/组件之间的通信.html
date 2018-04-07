@@ -63,13 +63,11 @@
 		/*
 			上面代码中用父组件使用@increase和@reduce来监听子组件，当按钮改变组件的data的'counter'后，
 			通过$emit方法在把他传递给父组件。$emit()方法第一个参数是自定义事件的名称，如increase何reduce,
-			后面的参数是要传递的数据，可以不传或者传多个。
+			后面的参数是要传递的数据，可以不传或者传多个。 v
 			v-on除了可以在组件上监听自定义事件，也可以监听DOM事件，这个时候可以用.native修饰符表示,监听的是该组
 			件的根元素
-
 			<my-component v-on:click.native="handleClick"></my-component> 
 		*/
-
 		
 	</script>
 </body>
