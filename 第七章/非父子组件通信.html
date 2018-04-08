@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		{{message}}
+		<component-a></component-a>
+	</div>
+	<div id="app2">
+		{{message}}
+		<component-b></component-b>
+		<button @click="handleRef">通过特殊属性ref</button>
+		<component-c ref="comC"></component-c>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		/*
+			实际的业务场景中，除了父子组件通信外，还有更多非父子组件通信的场景。
+			非父子组件一般有2种，兄弟组件和夸多级组件。
+			Vue 2.x中，推荐使用一个空的Vue实例作为中央事件总线(bus)，也就是一个中介。
+			跨级的组件间的通信，就是由中介来向双方传达消息。
+			这个方法巧妙的实现了任何组件之间的通信，包括父子，兄弟，跨级。
+		*/
+		let bus = new Vue();  // 创建中介。
+
+		Vue.component("component-a",{
+			template:'<button @click="handleEvent">传递事件</button>',
+			methods:{
+				handleEvent(){
+					// 在组件component-a中，点击按钮会通过bus把事件on-message传递出去给app收到，并且完成回调。
+					bus.$emit("on-message",'来自组件component-a的内容')
+				}
+			}
+		})
+		let app = new Vue({
+			el:"#app",
+			data:{
+				message:''
+			},
+			mounted(){
+				// 在app实例化时，监听来自bus的事件on-message
+				bus.$on("on-message",msg => {
+					this.message = msg
+				})
+			}
+		})
+
+		/*
+			除了使用中央事件总线bus之外，还有俩种方法实现组件之间的通信：父链和子组件索引。
+		*/
+		// 子组件中使用this.$parent可以直接访问该组件的父实例或者组件，父组件可以使用this.$children访问他所有子组件
+		// 而且可以递归向下或向上无线访问，直到根实例或者最内层的组件
+		
+		// 父链，但是不推荐。父子组件最好还是通过props和$emit来通信
+		Vue.component('component-b',{
+			template:'<button @click="handleEvent">通过父链改数据</button>',
+			methods:{
+				handleEvent(){
+					this.$parent.message = "来自组件component-b的内容"  // 
+				}
+			}
+		})
+
+		// 子组件索引.
+		Vue.component('component-c',{
+			template:'<div>子组件</div>',
+			data(){
+				return {
+					message :"子组件内容"
+				}
+			}
+		})
+
+		let app2 = new Vue({
+			el:"#app2",
+			data:{
+				message:""
+			},
+			methods:{
+				handleRef(){
+					let msg = this.$refs.comC.message  //子组件设置属性ref='comC'为索引，之后就可以在父组件获取.
+					console.log(msg);
+				}
+			}
+		})
+
+	</script>
+</body>
+</html>
