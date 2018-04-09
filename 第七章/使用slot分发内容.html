@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<child-component v-show="showChild"></child-component>
+		<child-component2>
+			<p>分发的内容</p>
+			<p>更多分发的内容</p>
+		</child-component2>
+		<child-component2></child-component2>
+		<br>
+		<hr>
+		<child-component3>
+			<h2 slot="header">标题</h2>
+			<p>正文内容</p>
+			<p>更多内容</p>
+			<div slot="footer">底部信息</div>
+		</child-component3>
+	</div>
+	<div id="app2">
+		<child-component4>
+			<template scope="props">
+				<p>来自父组件的内容</p>
+				<p>{{props.msg}}</p>
+			</template>
+		</child-component4>
+		<br>
+		<my-list :books="books">
+			<!-->作用域插槽也可以是具名的slot<-->
+			<template slot="book" scope="props">
+				<li>{{props.bookName}}</li>
+			</template>
+		</my-list>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		// 什么是slot 
+		/*
+			当需要让组件组合使用，混合父组件的内容和子组件的模板时，就会用到slot，这个过程叫做内容分发.
+			props传递数据，events触发事件和slot分发内容构建Vue组件的3个API来源，在复杂的组件也是由这3个构成。
+		*/
+		// 编译作用域
+		// 父组件的模板内容就是在父组件作用域内编译，子组件模板的内容主是在子组件作用域内编译。
+		Vue.component('child-component',{
+			template:'<div v-show="showChild">子组件</div>',
+			data(){
+				return {
+					showChild:true  // 这里的才是绑定在子组件上。
+				}
+			}
+		})
+		// slot用法.
+		/*
+			单个slot 在子组件内使用特殊的<slot>元素就可以为这个子组件开启一个slot（插槽），在父组件模板里，插入在子组件标签内的所有内容将代替子组件的slot
+			标签级它的内容。
+		*/
+		
+		Vue.component('child-component2',{
+			template:`<div>
+				<slot>
+					<p>如果父组件没有插入内容，我将作为默认内容出现</p>
+				</slot>
+			</div>`
+		})
+
+		/*
+			具名slot 
+			给slot元素指定一个name后可以分发多个内容,具名slot可以与单个slot共存。
+		*/
+
+		Vue.component("child-component3",{
+			template:`
+			<div class="container">
+				<div class="header">
+					<slot name="header"></slot>
+				</div>
+				<div class="main">
+					<slot></slot>
+				</div>
+				<div class="footer">
+					<slot name="footer"></slot>
+				</div>
+			</div>`,
+			mounted(){
+				// 获取slot节点
+				let header = this.$slots.header;  // 有具名的通过具名
+				let main = this.$slots.default;  //没有具名的则在default里面
+				let footer = this.$slots.footer 
+
+				console.log(header);
+				console.log(main)
+			}
+		})
+
+		/*
+			子组件内部声明了3个slot，其中在<div class="main">内的slot没有使用name,它将作为默认的slot出现，父组件没有使用slot
+			特性的元素与内容都将出现在这里。
+			如果没有指定默认的匿名slot，父组件内多余的内容片断都将被抛弃
+		*/
+
+		// Vue 2.x提供了用来访问被slot分发的内容和方法$slots，通过$slots可以访问某个具名,this,$slot.default包括了所有没有
+		// 被包含在具名slot中的节点.
+		let app = new Vue({
+			el:"#app",
+			data:{
+				showChild:true   // 这里的状态showChild绑定的是父组件的数据
+			}
+		})
+		// 作用域插槽 
+		/*
+			作用域插槽是一种特殊的slot，使用一个可以复用的模板替换已渲染的元素。
+		*/
+		Vue.component("child-component4",{
+			template:`
+				<div class="container">
+					<slot msg="来自子组件的内容"></slot>
+				</div>
+			`
+		})
+		Vue.component("my-list",{
+			props:{
+				books:{
+					type:Array,
+					default(){
+						return [];
+					}
+				}
+			},
+			template:`
+				<ul>
+					<slot name="book" v-for="book in books" :book-name="book.name"></slot>
+				</ul>
+			`
+		})
+		let app2 = new Vue({
+			el:"#app2",
+			data:{
+				books:[
+					{name:'Vue.js实战'},
+					{name:"JavaScript语言精粹"},
+					{name:"JavaScript高级程序设计"}
+				]
+			}
+		})
+
+		/*
+			子组件mylist接受一个来自父级的prop数组books，并且将它在name为book的slot上使用v-for指令循环，
+			同时暴露一个变量bookName。
+		*/
+	</script>
+</body>
+</html>
