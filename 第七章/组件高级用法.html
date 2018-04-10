@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<child-component :count="1">
+			<p>没有slot</p>
+		</child-component>
+		<child-component2 inline-template>
+			<div>
+				<h2>在父组件中使用子组件的模板</h2>
+				<p>{{message}}</p>
+				<p>{{msg}}</p>
+			</div>
+		</child-component2>
+		<component :is="currentView"></component>
+		<button @click="handleChangeView('A')">切换到组件A</button>
+		<button @click="handleChangeView('B')">切换到组件B</button>
+		<button @click="handleChangeView('C')">切换到组件C</button>
+		<child-component3></child-component3>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		
+		//  递归组件 
+		/*
+			组件在它的模板内可以递归的调用自己，只要给组件设置name的选项就可以了.
+		*/
+		Vue.component('child-component',{
+			name:'child-component',
+			props:{
+				count:{
+					type:Number,
+					default:1
+				}
+			},
+			template:`
+				<div class="child">
+					<slot>slot</slot>
+					<child-component :count="count + 1" v-if="count < 3">
+					</child-component>
+				</div>
+			`
+		})
+
+
+		//内联模板
+		/*
+			 组件的模板一般都是在template选项内定义的，Vue剔红了一个内联模板的功能，在使用组件时，
+			给组件的标签使用inline-template特性，组件就会把它的内容当做模板，而不是当做内容分发。
+			父组件中的message和子组件中的msg都可以渲染，如果同名则优先子组件的数据，就是作用域比较混乱，所以
+			不建议轻易使用内联模板。
+		*/
+		Vue.component('child-component2',{
+			data(){
+				return {
+					msg:'子组件的数据'
+				}
+			}
+		})
+
+		// 异步组件
+		/*
+			当你的组件足够的多，工程大的时候，一开始就加载所有的组件是没有必要的。Vue可以将组件定义为
+			一个工厂函数，动态的解析组件。Vue只在组件需要渲染的时候出发工厂函数，并把结果缓存起来，用于
+			后面的再次渲染。
+		*/
+
+		/*
+			工厂函数接受一个resolve回调和一个reject回调来表示组件的成功和失败。
+		*/
+
+		Vue.component('child-component3',(resolve,reject) => {
+			setTimeout(() => {
+				resolve({
+					template:`<div>我是异步渲染的</div>`
+				})
+			},2000)
+		})
+		// 动态组件 
+		/*
+			Vue 提供了一个特殊的元素<component>来动态地挂载不同的组件，使用is特性来选择要挂载的组件.
+		*/
+		let app = new Vue({
+			el:"#app",
+			data:{
+				message:'父组件的数据',
+				currentView:"comA"
+			},
+			components:{
+				comA:{
+					template:`<div>A</div>`
+				},
+				comB:{
+					template:`<div>B</div>`
+				},
+				comC:{
+					template:`<div>C</div>`
+				}
+			},
+			methods:{
+				handleChangeView(component){
+					this.currentView = `com${component}`
+				}
+			}
+		})
+	</script>
+</body>
+</html>
