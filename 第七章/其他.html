@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<div id="div" v-if="showDiv">这是一段文本</div>
+		<button @click="getText">获取div内容</button>
+		<my-component></my-component>
+	</div>
+	<div id="mount-div"></div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/x-template" id="my-component">
+		<div>这是组件内容</div>
+	</script>
+	<script type="text/javascript">
+		// $nextTick 用来直到DOM更新是什么时候更新完成的。
+
+		// 使用X-Templates
+		/*
+			如果组建中的内容很冗长和复杂，而且都是在javascript中拼接字符串的话效率是很低的。
+			Vue提供了一种定义模板的方式，在script里使用text/x-template类型，并且指定一个id，
+			将这个id赋予template，这样就可以愉快的写HTML的代码。不用考虑换行的问题
+		*/
+		Vue.component('my-component',{
+			template:"#my-component"
+		})
+		let app = new Vue({
+			el:"#app",
+			data:{
+				showDiv:false
+			},
+			methods:{
+				getText(){
+					this.showDiv = true;
+					/* 会报错 因为此时div还没有创建出来，直到下一个Vue事件循环的时候，才会开始创建*/
+					//let text = document.getElementById('div').innerHTML;  
+					/*改成调用$nextTick方法，就可以在DOM创建完之后输出了*/
+					this.$nextTick(() => {
+						let text = document.getElementById('div').innerHTML;  
+						console.log(text)
+					})	
+				}
+			}
+		})
+		// 手动挂载实例。
+		/*
+			除了使用new Vue()的形式创建出来的实例，还可以进行动态的创建Vue实例。
+			Vue提供了Vue.extend和$mount俩个方法来手动挂载一个实例。
+		*/
+		var MyComponent = Vue.extend({
+			template:"<div>hello:{{name}}</div>",
+			data(){
+				return {
+					name: "C"
+				}
+			}
+		})
+
+		new MyComponent().$mount("#mount-div")  
+	</script>
+</body>
+</html>
