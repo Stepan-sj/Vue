@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div>
+		<h3>组件说明</h3>
+		<p>数字输入框，对普通输入框的扩展，用来输入一个标准的数字</p>
+		<p>只能输入数字,可以通过按钮进行加1或减1，有最大值，最小值和初始值</p>
+	</div>
+	<br>
+	<div id="app">
+		<input-number v-model="value" :max="10" :min="0"></input-number>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script src='input-number.js'></script>
+	<script src="index.js"></script>
+</body>
+</html>
