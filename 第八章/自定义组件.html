@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<input type="" name="" v-focus>
+		<div v-test:msg.a.b="message"></div>
+		<br>
+		<!--如果需要传入多个值，也可以传入对象字面量 -->
+
+		<div v-text="{msg:'hello',name:'Aresn'}"></div>
+	</div>
+	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		// 自定义指令
+		/*
+			自定义指令的注册方法和组件很像，也分全局和局部。
+			写法与组件基本类似，只不过方法由component改成了directive。
+			自定义指令的选项,由几个钩子函数组成，每一个都是可选的
+			bind: 只调用一次，指令第一次绑定到元素时调用，用这个钩子函数可以定义一个在绑定时
+					执行一次的初始化动作.
+			inserted: 被绑定元素插入父节点时调用，父节点存在即可调用，不必存在于document中。
+			update：被绑定元素所在的模板更新时调用，而不论绑定值是否变化。通过比较更新前后的绑定值。
+					可以忽略不必要的模板更新。
+			componentUpdated:被绑定元素所在模板完成一次更新周期时调用。
+			unbind：只调用一次，指令与元素解绑时调用
+
+			可以根据不同的需求在不同的钩子函数内完成逻辑代码。比如创建一个v-focus，希望在元素插入父节点的
+			时候就调用，就可以用到inserted钩子。
+		*/
+
+		/*
+			每个钩子都有几个参数可以使用：
+				el: 指令绑定的元素，可用用来直接操作DOM
+				binding 一个对象：{
+					name   指令名，不包括v-前缀
+					value  指令的绑定值，也就是"="号后面的。
+					oldValue 指令绑定的前一个值，仅在updata和componentUpdated钩子中可用。
+					expression 绑定值的字符串形式
+					arg 传给指令的参数 例如v-my-directive:foo，arg的值就是foo
+					modifiers 一个包含修饰符的对象，
+				}
+				vnode Vue编译生成的虚拟节点 
+				oldVnode 上一个虚拟节点 也是仅在updata和componentUpdated钩子中可用。
+		*/
+		// 全局
+		Vue.directive('focus',{
+			// 指令选项
+			inserted(el){
+				el.focus()
+			}
+		})
+		Vue.directive('test',{
+			bind(el,binding,vnode){
+				let key = [];
+				for (let i in vnode) {
+					key.push(i)
+				}
+				el.innerHTML = `
+					name:${binding.name} <br>
+					value: ${binding.value} <br>
+					expression : ${binding.expression} <br>
+					argument: ${binding.arg}
+					modifiers: ${JSON.stringify(binding.modifiers)} <br>
+					vnode keys : ${key.join(',')}
+				`
+			}
+		})
+		// 局部注册
+		let app = new Vue({
+			el:"#app",
+			data:{
+				message:"some text "
+			}
+			// directive:{
+			// 	focus:{
+			// 		// 指令选项
+			// 	}
+			// }
+		})
+	</script>
+</body>
+</html>
