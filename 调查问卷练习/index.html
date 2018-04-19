@@ -14,12 +14,15 @@
 			height: 550px;
 			border:1px solid black;
 		}
+		.button-items{
+			margin-top: 10px;
+		}
 	</style>
 </head>
 <body>
 	<div id="app" v-cloak>
 		<div class="container">
-			<div class="first">
+			<div class="first" v-show="page == 1">
 				<p>1.请问你的性别是：</p>
 				<input id="nan" type="radio" name="sex" value="nan" v-model="sex">
 				<label for="nan">男</label>
@@ -28,17 +31,80 @@
 				<input id="baomi" type="radio" name="sex" value="baomi" v-model="sex">
 				<label for="baomi">保密</label>
 			</div>
-			<div class="">
-				
+			<div class="second" v-show="page == 2">
+				<p>2.请问你的兴趣爱好</p>
+				<input type="checkbox" name="hobby" value="game" id="game" v-model="hobby">
+				<label for="game">游戏</label>
+				<input type="checkbox" name="hobby" value="book" id="book" v-model="hobby">
+				<label for="book">书籍</label>
+				<input type="checkbox" name="hobby" value="music" id="music" v-model="hobby">
+				<label for="music">音乐</label>
+				<input type="checkbox" name="hobby" value="sport" id="sport" v-model="hobby">
+				<label for="sport">运动</label>
 			</div>
+			<div class="Third" v-show="page == 3">
+				<p>3.请做个自我介绍，不少于100字</p>
+				<textarea v-model="introduce">
+					
+				</textarea>
+			</div>
+			<button-items @next="next" @prve="prve"></button-items>
 		</div>
 	</div>
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script type="text/javascript">
+		Vue.component('button-items',{
+			template:`
+				<div class="button-items">
+					<button>重置</button>
+					<button v-show="up" @click="upPage">上一步</button>
+					<button @click="nextPage">下一步</button>
+				</div>
+			`,
+			data(){
+				return {
+					up:false,
+					page:1
+				}
+			},
+			methods:{
+				nextPage(){
+					this.page++;
+					if (this.page > 3) { return false }
+					if (this.page >= 2 && this.page <= 3) {
+						this.up = true
+					}
+					console.log(this.page)
+					this.$emit('next',this.page);
+				},
+
+				upPage(){
+				
+					this.page--;
+					if (this.page == 1) {
+						this.up = false
+					} 
+					this.$emit('prve',this.page);
+				}
+			}
+		})
+
 		let app = new Vue({
 			el:"#app",
 			data:{
-				sex:""
+				sex:"",
+				introduce:"",
+				hobby:[],
+				page:1
+			},
+			methods:{
+				next(page){
+
+					this.page = page
+				},
+				prve(page){
+					this.page = page
+				}
 			}
 		})
 	</script>
