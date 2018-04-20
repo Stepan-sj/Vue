@@ -48,42 +48,47 @@
 					
 				</textarea>
 			</div>
-			<button-items @next="next" @prve="prve"></button-items>
+			<button-items :btn="btnStatus"  @next="next" @prve="prve" ></button-items>
 		</div>
 	</div>
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script type="text/javascript">
 		Vue.component('button-items',{
+			props:["btn"],
 			template:`
 				<div class="button-items">
 					<button>重置</button>
 					<button v-show="up" @click="upPage">上一步</button>
-					<button @click="nextPage">下一步</button>
+					<button @click="nextPage" :disabled="btn">{{btntext}}</button>
+					<p>{{btn}}</p>
 				</div>
 			`,
 			data(){
 				return {
 					up:false,
-					page:1
+					page:1,
+					disabled:this.btn,
+					btntext:"下一步"
 				}
 			},
 			methods:{
 				nextPage(){
 					this.page++;
-					if (this.page > 3) { return false }
 					if (this.page >= 2 && this.page <= 3) {
 						this.up = true
 					}
-					console.log(this.page)
+					if (this.page == 3) {
+						this.btntext = "提交"
+					}
 					this.$emit('next',this.page);
 				},
 
 				upPage(){
-				
 					this.page--;
 					if (this.page == 1) {
 						this.up = false
 					} 
+					this.disabled = false
 					this.$emit('prve',this.page);
 				}
 			}
@@ -95,15 +100,31 @@
 				sex:"",
 				introduce:"",
 				hobby:[],
-				page:1
+				page:1,
+				btnStatus:true
 			},
 			methods:{
 				next(page){
-
-					this.page = page
+					this.page = page;
+					this.btnStatus = true;
 				},
-				prve(page){
+				prve(page){  
 					this.page = page
+				}
+			},
+			watch:{
+				sex(){
+					this.btnStatus = false;
+				},
+				hobby(){
+					if (this.hobby.length === 2) {
+						this.btnStatus = false;
+					}
+				},
+				introduce(){
+					if (this.introduce.length >= 100) {
+						this.btnStatus = false;
+					}
 				}
 			}
 		})
