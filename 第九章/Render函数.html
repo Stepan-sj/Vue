@@ -5,6 +5,139 @@
 	<title>Document</title>
 </head>
 <body>
+	<div id="app">
+		<anchor :level="2" title="特性">特性</anchor>
+		<hr>
+		<anchor2 :level="2" title="特性">特性</anchor2>
+			<script type="text/x-template" id="anchor">
+				<div>
+					<h1 v-if="level === 1">
+						<a :href="'#' + title">
+							<slot></slot>
+						</a>
+					</h1>
+
+					<h2 v-if="level === 2">
+						<a :href="'#' + title">
+							<slot></slot>
+						</a>
+					</h2>
+
+					<h3 v-if="level === 3">
+						<a :href="'#' + title">
+							<slot></slot>
+						</a>
+					</h3>
+				</div>
+			</script>
+
+	</div>
 	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+		// Vue2.0 与 1.0 最大的差别就在于2.0使用了Virtual Dom（虚拟DOM）来更新DOM节点。提升渲染性能。
+		// 本章来探索一下Vue用于实现Virtual Dom的Render函数的用法.先来看看什么是Virtual Dom。
+		/*
+			Virtual Dom只是一个轻量级的JavaScript对象，在状态发生变化时，Virtual Dom会进行Diff运算，
+			来更新只需要被替换的DOM，而不是全部重绘。
+		*/
+		/*
+			普通的创建dom ： 
+				<div id="main">
+					<p>文本</p>
+					<p>文本</p>
+				</div>
+
+			// 而是用 Virtual Dom创建的JavaScript对象一般是这样：
+			var vNode = {
+				tag:'div',
+				attributes:{
+					id:'main'
+				},
+				children:[
+					// P 节点
+				]
+			}
+			Vnode 对象通过一些特定的选项描述了真实的DOM结构。
+		*/
+		/*
+			在Vue2.0中，Virtual Dom就是通过一种VNode类表达的，每个DOM元素或者组件都对应一个VNode对象。
+			(对象属性太多，到官方文档查看)
+		*/
+		/*
+			VNode主要可以分为五类：
+				TextVNode  文本节点
+				ElementVNode 普通元素节点
+				ComponentVNode 组件节点
+				EmptyVNode 没有内容的注释节点
+				CloneVNode 克隆节点，可以是以上任意类型的节点，唯一区别在于isCloned属性为true。
+		*/
+		/*
+			多数情况下我们使用template就足够了，但是在一些特定的场景下，使用Virtual Dom会更简单。
+		*/
+	</script>
+
+	<script >
+		// Render函数
+		/*
+			假设一个文章类型的网站有很多一级标题，二级标题。。等等 为方便分享URL。它们都做成的锚点，点击一下
+			将会把内容加在网址后面，以#分隔，如果把它封装成一个组件，一般的写法可能会是这样:
+		*/
+		Vue.component('anchor',{
+			template:"#anchor",
+			props:{
+				level:{
+					type:Number,
+					required : true
+				},
+				title:{
+					type:String,
+					default:""
+				}
+			}
+		})
+	
+		/*
+			这样写虽然没有错误，但是代码太过于冗长，组件的template大部分代码是重复的。
+			只是heading元素的级别不同，再者必须插入一个根元素DIV 这是组件的要求。
+			事实上，level已经具备了heading级别的含义，我们更希望能像拼接字符串的形式来构造heading元素.
+			在Render函数中确实可以这样做
+		*/ 
+
+		Vue.component('anchor2',{
+			props:{
+				level:{
+					type : Number,
+					required : true
+				},
+				title:{
+					type:String,
+					default:""
+				}
+			},
+			render(createElement){
+				return createElement(
+					'h' + this.level,
+					[
+						createElement(
+							'a',
+							{
+								domProps:{
+									href : '#' + this.title
+								}
+							},
+							this.$slots.default
+						)
+					]
+				)
+			}
+		})
+
+		// Render函数通过createElement参数来创建Virtual Dom,结构精简了很多。
+		// Render函数所有神器的地方都在这个createElement里。
+		let app = new Vue({
+			el:"#app"
+		})
+
+	</script>
 </body>
 </html>
