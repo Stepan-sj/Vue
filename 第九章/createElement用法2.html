@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<ele>111</ele>
+		<ele2></ele2>
+		<br>
+		<ele3></ele3>
+	</div>
+	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script type="text/javascript">
+    // 以往在template里，我们都是在组件的标签上使用形容v-bind:class，v-bind:style,v-on:click
+    // 这样的指令，在Render函数我们都将其写在了数据对象里。
+    Vue.component('ele',{
+    	template:`
+				<div id="element" :class="{show:show}" @click="handleClick">文本内容</div>
+    	`,
+    	data(){
+    		return {
+    			show: true
+    		}
+    	},
+    	methods:{
+    		handleClick(){
+    			console.log(1)
+    		}
+    	}
+    })
+
+    // Render函数
+    // 就此例而言，template写法比render写法要可读而且简洁，所以要在合适的场景使用render函数
+    Vue.component('ele2',{
+    	render(createElement){
+    		return createElement(
+    			'div',
+    			{
+    				// 动态绑定class ，同:class
+    				class:{
+    					'show':this.show
+    				},
+    				// 普通html特性，
+    				attrs:{
+    					id:"element2"
+    				},
+    				//事件
+    				on:{
+    					click:this.handleClick
+    				}
+    			},
+    			"文本内容"
+    		)
+    	},
+    	data(){
+    		return {
+    			show:true
+    		}
+    	},
+    	methods:{
+    		handleClick(){
+    			console.log(2)
+    		}
+    	}
+    })
+
+   	// 所有的组件树种，如果VNode是组件或含有组件的slot，那么VNode必须唯一。
+   	// 如果想要重复渲染多个组件或元素的方法由很多。
+
+   	let child = {
+   		render(createElement){
+   			return createElement("p","text")
+   		}
+   	};
+
+   	Vue.component("ele3",{
+   		render: function (createElement) {
+   			return createElement('div',
+   				Array.apply(null,{
+   					length : 5
+   				}).map(function(){
+   					return createElement(child);
+   				})
+   			)
+   		}
+   	})
+
+		let app = new Vue({
+		  el:"#app"
+		})
+	</script>
+</body>
+</html>
