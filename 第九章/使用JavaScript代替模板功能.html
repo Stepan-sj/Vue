@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app">
+		<ele :show="show"></ele>	
+		<button @click="show = !show">btn</button>
+		<br>
+		<ele2 :list="list"></ele2>
+		<br>
+		<ele3 :list="list"></ele3>
+		<button @click="handleClick">btn</button>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script>
+		// 在Render函数中，不在需要Vue内置的指令，比如v-if,v-for，当然也没办法使用，无论使用
+		// 什么功能，都可以用原生的JavaScript，比如v-if和v-eles 可以这样写
+		Vue.component('ele',{
+			render(createElement){
+				if (this.show) {
+					return createElement("p","show的值为true")
+				} else {
+					return createElement("p","show的值为false")
+				}
+			},
+			props:{
+				show:{
+					type:Boolean,
+					default:false
+				}
+			}
+		})
+		// for则可以使用一个简单的for循环来实现
+		Vue.component("ele2",{
+			render(createElement){
+				let nodes = [];
+				for (let i = 0; i < this.list.length; i++) {
+					nodes.push(createElement("p",this.list[i]))
+				}
+				return createElement("div",nodes);
+			},
+			props:{
+				list:Array
+			}
+		})
+
+		// 实现可以使用if,else语句和map方法来渲染一个列表
+		Vue.component("ele3",{
+			render(createElement){
+				if (this.list.length) {
+					return createElement("ul",this.list.map( item => {
+						return createElement("li",item)
+					}))
+				} else {
+					return createElement("p","列表为空")
+				}
+			},
+			props:{
+				list:{
+					type:Array,
+					default(){
+						return [];
+					}
+				}
+			}
+		})
+		let app = new Vue({
+			el:"#app",
+			data:{
+				show:false,
+				list:[]
+			},
+			methods:{
+				handleClick(){
+					this.list = [
+						"Vue.js 实战",
+						"JavaScript高级程序设计",
+						"JavaScript 语言精粹"
+					]
+				}
+			}
+		})
+
+	</script>
+</body>
+</html>
