@@ -5,6 +5,12 @@
 	<title>Document</title>
 </head>
 <body>
+	<div id="app">
+		<smart-item :data='data'></smart-item>
+		<button @click="change('img')">图片</button>
+		<button @click="change('video')">视频</button>
+		<button @click="change('text')">文本</button>
+	</div>
 	<script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script>
 		//  函数化组件
@@ -18,6 +24,104 @@
 		* 使用函数化组件的时候，render提供了第二个参数context来提供临时上下文，组件需要
  		*	数据都是通过这个上下文来传递的。
 		*/
+		let imgItem = {
+			props:["data"],
+			render(createElement){
+				return createElement('div',[
+					createElement('p',"图片组件"),
+					createElement('img',{
+						attrs:{
+							scr:this.data.url
+						}
+					})
+				])
+			}
+		}; 
+
+		let videoItem = {
+			props:['data'],
+			render(createElement){
+				return createElement('div',[
+					createElement('p',"视屏组件"),
+					createElement('video',{
+						attrs:{
+							src:this.data.url,
+							controls:"controls",
+							autoplay:"autoplay"
+						}
+					})
+				])
+			}
+		};
+		let textItem = {
+			props:['data'],
+			render(createElement){
+				return createElement('div',[
+					createElement('p','文本组件'),
+					createElement('p',this.data.text)
+				])
+			}
+		}
+		Vue.component('smart-item',{
+			// 函数化组件
+			functional:true,
+			render(createElement,context){
+				function getComponent () {
+					let data = context.props.data;
+					if (data.type == "img") return imgItem;
+					if (data.type == "video") return videoItem;
+					return textItem
+				}
+
+				return createElement(
+					getComponent(),
+					{
+						props:{
+							// 把smart-item的prop：data传给上面智能选择的组件
+							data:context.props.data
+						}
+					},
+					context.children
+				)
+			},
+			props:{
+				data:{
+					type:Object,
+					required:true
+				}
+			}
+		})
+
+		let app = new Vue({
+			el:"#app",
+			data:{
+				data:{}
+			},
+			methods:{
+				change(type){
+					if (type == 'img') {
+						this.data = {
+							type:'img',
+							url:'https://raw.githubusercontent.com/iview/iview/master/assets/log.png'
+						}
+					} else if (type == "video") {
+						this.data = {
+							type:"video",
+							url:'http://vjs.zencdn.net/v/oceans.mp4'
+						}
+					} else if (type == 'text') {
+						this.data = {
+							type:"text",
+							text:"这是一段文本"
+						}	
+					}
+				}
+			},
+			created(){
+				// 初始化，默认图片组件的数据
+				this.change("img")
+			}
+		})
 	</script>
 </body>
 </html>
