@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,5 +9,45 @@
 </head>
 <body>
   <script type="text/javascript" src="https://unpkg.com/vue/dist/vue.min.js"></script>
+  <script>
+    /**
+    * 使用render函数最不友好的地方就是在模板比较简答时，写起来也很复杂，而且难以阅读出DOM结构。
+    * 尤其是当子节点嵌套比较多的时候，嵌套的createElement就像盖楼一样一层一层延伸下去。
+    */
+    // ex:
+    /*
+      <Anchor :level="1">
+        <span>一级</span>标题
+      </Anchor>
+      使用createElement改写后应该是：
+        return createElement("Anchor",{
+          props:{
+            level:1
+          }
+        },[
+          createElement("span","一级"),
+          "标题"
+        ])
+    */
+    /*
+    \* 为了让Render函数更好的书写和阅读，Vue提供了插件babel-plugin-transform-vue-jsx 来支持JSX语法
+    * JSX是一种看起来像HTML，但是实际上是JavaScript的语法扩展，用更接近DOM结构的形式来描述一个组件的UI
+    * 和状态信息。
+    */
+    // 上面的理智用JSX改写后就是
+    new Vue({
+      el:"#app",
+      render (h) {
+        return (
+          <Anchor level={1}>
+            <span>一级</span>标题
+          </Anchor>
+        )
+      }
+    })
+    
+    // 上面的代码是无法运行的，需要在webpack里面配置插件babel-plugin-transform-vue-jsx 编译后才可以
+  </script>
+  
 </body>
 </html>
