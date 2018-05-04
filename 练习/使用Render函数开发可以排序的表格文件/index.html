@@ -9,7 +9,8 @@
 </head>
 <body>
   <div id="app" v-cloak>
-
+    <v-table :data="data" :columns="columns"></v-table>
+    <button @click="handleAddData">添加数据</button>
   </div>
   <script  src="https://unpkg.com/vue/dist/vue.min.js"></script>
   <script src="table.js"></script>
